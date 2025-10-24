@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+
+    <Operation Class="PatchOperationAddModExtension">
+        <xpath>Defs/TerrainTemplateDef[defName="VFEArch_WoolCarpet"]</xpath>
+        <value>
+            <li Class="BetterArchitect.TemplateCategoryExtension">
+                <designationCategory>Ferny_FloorsCarpet</designationCategory>
+            </li>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[defName="SterileTile"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsMetal</designationCategory>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[defName="VFEArch_Asphalt" or defName="VFEArch_PlayerBrokenAsphalt"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsConcrete</designationCategory>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[@Name="TileMetalBase"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsMetal</designationCategory>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[@Name="CobblestoneBase"
+            or @Name="PolishedStoneFloorBase"
+            or @Name="StoneSlabsBase"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsStone</designationCategory>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[@Name="VFEArch_WoodenParquetBase"
+            or defName="VFEArch_WoodPlankFloorWalnut"
+            or defName="VFEArch_WoodPlankFloorBirch"
+            or defName="VFEArch_WoodPlankFloorMahogany"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsWood</designationCategory>
+        </value>
+    </Operation>
+
+</Patch>
