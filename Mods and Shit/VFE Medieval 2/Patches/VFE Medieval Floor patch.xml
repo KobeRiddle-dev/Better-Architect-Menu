@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+    <!-- Floors -->
+    <Operation Class="PatchOperationAddModExtension">
+        <xpath>Defs/VFEMedieval.LeatherTerrainTemplateDef[defName="VFEM2_Matting_"]</xpath>
+        <value>
+            <li Class="BetterArchitect.TemplateCategoryExtension">
+                <designationCategory>Ferny_FloorsCarpet</designationCategory>
+            </li>
+        </value>
+    </Operation>
+
+    <!-- Floor Coverings -->
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="VFEM2_Viking_Slab_Medium" or defName="VFEM2_Viking_Slab_Broad"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsStone</designationCategory>
+        </value>
+    </Operation>
+
+</Patch>
