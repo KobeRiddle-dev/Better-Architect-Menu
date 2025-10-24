@@ -155,26 +155,19 @@
     <Operation Class="PatchOperationAdd">
         <xpath>Defs/TerrainDef[defName="Concrete" or defName="PavedTile"]</xpath>
         <value>
-            <designationCategory>Ferny_FloorsStone</designationCategory>
+            <designationCategory>Ferny_FloorsConcrete</designationCategory>
         </value>
     </Operation>
 
     <Operation Class="PatchOperationAdd">
-        <xpath>Defs/TerrainDef[@ParentName="TileMetalBase"]</xpath>
+        <xpath>Defs/TerrainDef[@Name="TileMetalBase"]</xpath>
         <value>
             <designationCategory>Ferny_FloorsMetal</designationCategory>
         </value>
     </Operation>
 
     <Operation Class="PatchOperationAdd">
-        <xpath>Defs/TerrainDef[@ParentName="TileStoneBase"]</xpath>
-        <value>
-            <designationCategory>Ferny_FloorsStone</designationCategory>
-        </value>
-    </Operation>
-
-    <Operation Class="PatchOperationAdd">
-        <xpath>Defs/TerrainDef[@ParentName="FlagstoneBase"]</xpath>
+        <xpath>Defs/TerrainDef[@Name="TileStoneBase" or @Name="FlagstoneBase"]</xpath>
         <value>
             <designationCategory>Ferny_FloorsStone</designationCategory>
         </value>
