@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[defName="RB_SterileGrateTile"
+            or defName="RB_SterileStuddedTile"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsMetal</designationCategory>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[@Name="RB_TileGrateMetalBase"
+            or @Name="RB_TileStuddedMetalBase"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsMetal</designationCategory>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[@Name="RB_FinePlankWoodBase"]</xpath>
+        <value>
+            <designationCategory>Ferny_FloorsWood</designationCategory>
+        </value>
+    </Operation>
+
+</Patch>
