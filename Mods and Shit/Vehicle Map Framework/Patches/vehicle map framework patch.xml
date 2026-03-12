@@ -7,7 +7,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[defName="VMF_Alternator"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 
@@ -15,7 +15,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[defName="VMF_PipeConnector"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 
@@ -23,7 +23,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[defName="VMF_Turret_ZiplineTurret"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 	
@@ -31,7 +31,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[@Name="VMF_WirelessCharger"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 
@@ -39,7 +39,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[@Name="VehicleEnterSpotBase"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 
@@ -47,7 +47,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[@Name="VehicleSeatBase"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 
@@ -55,7 +55,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[defName="VMF_CargoContainer"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 
@@ -63,7 +63,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[defName="VMF_TurboCharger"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 
@@ -71,7 +71,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[defName="VMF_LiftFan"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 
@@ -79,7 +79,7 @@
 		<success>Always</success>
 		<xpath>Defs/ThingDef[defName="VMF_FuelTank"]/designationCategory</xpath>
 		<value>
-			<designationCategory>Ferny_TransportInfrastructure</designationCategory>
+			<designationCategory>Ferny_PlatformTransport</designationCategory>
 		</value>
 	</Operation>
 

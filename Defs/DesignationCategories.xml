@@ -975,6 +975,22 @@
   </DesignationCategoryDef>
 
   <DesignationCategoryDef>
+    <defName>Ferny_PlatformTransport</defName>
+    <label>Platform</label>
+    <description>Build platform transport.</description>
+    <order>7</order>
+    <specialDesignatorClasses>
+      <li>Designator_Cancel</li>
+      <li>Designator_Deconstruct</li>
+    </specialDesignatorClasses>
+    <modExtensions>
+      <li Class="BetterArchitect.NestedCategoryExtension">
+        <parentCategory>Ferny_Transport</parentCategory>
+      </li>
+    </modExtensions>
+  </DesignationCategoryDef>
+
+  <DesignationCategoryDef>
     <defName>Ferny_TransportInfrastructure</defName>
     <label>Infrastructure</label>
     <description>Build transport infrastructure.</description>
