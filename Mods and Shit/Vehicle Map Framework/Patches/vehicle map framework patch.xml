@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Patch>
 	
-<!-- TRANSPORT INFRASTRUCTURE -->
+
+<!-- Remove dropdowns -->
+
+	<Operation Class="PatchOperationRemove">
+		<success>Always</success>
+		<xpath>Defs/DesignatorDropdownGroupDef[defName="VMF_WirelessChargerGroup"]</xpath>
+	</Operation>
+
+	<Operation Class="PatchOperationRemove">
+		<success>Always</success>
+		<xpath>Defs/ThingDef[defName="VMF_WirelessTransmitter"]/designatorDropdown</xpath>
+	</Operation>
+
+	<Operation Class="PatchOperationRemove">
+		<success>Always</success>
+		<xpath>Defs/ThingDef[defName="VMF_WirelessReceiver"]/designatorDropdown</xpath>
+	</Operation>
+
+
+
+<!-- PLATFORM -->
 
 	<Operation Class="PatchOperationReplace">
 		<success>Always</success>

@@ -1025,6 +1025,7 @@
     <li IfModActive="ponpeco.PFSF">Mods and Shit/Ponpeco Furnitures Sci-Fi</li>
     <li IfModActive="vanillaexpanded.vfefactory">Mods and Shit/VFE Factory</li>
     <li IfModActive="krkr.rule56">Mods and Shit/CAI</li>
+    <li IfModActive="godsfathermixtape.worksitesexpanded">Mods and Shit/Worksites Expanded</li>
     <!-- (Add new mods here ^^^^^) -->
   </v1.6>
 </loadFolders>
