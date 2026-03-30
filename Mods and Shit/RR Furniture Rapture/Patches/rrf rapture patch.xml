@@ -120,7 +120,8 @@
             defName="RRDesktopThree" or
             defName="RRGojaRadio" or
             defName="RRBigStereoConsole" or
-            defName="RRStereoConsole"
+            defName="RRStereoConsole" or
+			defName="RRHomeTVTwo"
         ]</xpath>
         <value>
             <designationCategory>Joy</designationCategory>
@@ -146,7 +147,8 @@
             defName="RRCupboard" or
             defName="RRCupboardTwo" or
             defName="RRBookshelfOne" or
-            defName="RRCupboardThree"
+            defName="RRCupboardThree" or
+			defName="RRRefrigerator"
         ]</xpath>
         <value>
             <designationCategory>Furniture</designationCategory>
