@@ -14,11 +14,8 @@ public static class CarpetFromBlueprint
 
     public static void Postfix(TerrainDef __result, TerrainTemplateDef tp)
     {
-        Log.Message("[BetterArchitect] CarpetFromBlueprint postfix called for " + __result.defName);
         if (tp.GetModExtension<TemplateCategoryExtension>() is { } extension)
-        {
             __result.designationCategory = extension.designationCategory;
-            Log.Message("[BetterArchitect] Template now has category " + __result.designationCategory.defName);
-        }
     }
+
 }

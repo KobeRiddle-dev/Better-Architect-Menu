@@ -24,8 +24,7 @@ public static class TerrainFromLeather
     public static void Postfix(TerrainDef __result, Def tp)
     {
         if (tp.GetModExtension<TemplateCategoryExtension>() is { } extension)
-        {
             __result.designationCategory = extension.designationCategory;
-        }
+
     }
 }
