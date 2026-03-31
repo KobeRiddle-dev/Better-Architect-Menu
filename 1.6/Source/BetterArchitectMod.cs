@@ -20,19 +20,7 @@ namespace BetterArchitect
             BetterArchitectSettings.mod = this;
             EditModeRuntime.Initialize();
             Harmony harmonyInstance = new Harmony("BetterArchitectMod");
-
-            PatchVFEMedievalLeatherMattingGenerator(harmonyInstance);
-
             harmonyInstance.PatchAll();
-        }
-
-        private static void PatchVFEMedievalLeatherMattingGenerator(Harmony harmonyInstance)
-        {
-            System.Reflection.MethodInfo originalLeatherMattingGenerator = AccessTools.TypeByName("VFEMedieval.VFEMedieval_DefGenerator_GenerateImpliedDefs_PreResolve_Patch").GetMethod("TerrainFromLeather");
-            System.Reflection.MethodInfo postfix = typeof(TerrainFromLeather).GetMethod("Postfix");
-
-            if (originalLeatherMattingGenerator != null && postfix != null)
-                harmonyInstance.Patch(original: originalLeatherMattingGenerator, postfix: postfix);
         }
 
         public override void DoSettingsWindowContents(Rect inRect)
