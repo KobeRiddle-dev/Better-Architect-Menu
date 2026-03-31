@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-	<DesignationCategoryDef>
+	<!-- <DesignationCategoryDef>
 		<defName>VCHE_PipeNetworks</defName>
 		<label>Resources</label>
 		<order>350</order>
@@ -9,9 +9,9 @@
 		<li>Designator_Cancel</li>
 		<li>Designator_Deconstruct</li>
 		</specialDesignatorClasses>
-	</DesignationCategoryDef>
+	</DesignationCategoryDef> -->
 
-	<DesignationCategoryDef>
+	<!-- <DesignationCategoryDef>
 		<defName>Ferny_OxygenNetwork</defName>
 		<label>Oxygen</label>
 		<description>Manage oxygen.</description>
@@ -25,20 +25,20 @@
 				<parentCategory>VCHE_PipeNetworks</parentCategory>
 			</li>
 		</modExtensions>
-	</DesignationCategoryDef>
+	</DesignationCategoryDef> -->
 
 	<DesignationCategoryDef>
 		<defName>Ferny_AstrofuelNetwork</defName>
 		<label>Astrofuel</label>
 		<description>Manage astrofuel.</description>
-		<order>6</order>
+		<order>5</order>
 		<specialDesignatorClasses>
 			<li>Designator_Cancel</li>
 			<li>Designator_Deconstruct</li>
 		</specialDesignatorClasses>
 		<modExtensions>
 			<li Class="BetterArchitect.NestedCategoryExtension">
-				<parentCategory>VCHE_PipeNetworks</parentCategory>
+				<parentCategory>Ferny_Space</parentCategory>
 			</li>
 		</modExtensions>
 	</DesignationCategoryDef>

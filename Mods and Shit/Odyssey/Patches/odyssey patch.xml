@@ -28,6 +28,7 @@
         </value>
     </Operation>
 
+
     <!-- <Operation Class="PatchOperationAdd">
         <success>Always</success>
         <xpath>Defs/DesignationCategoryDef[defName="Odyssey"]</xpath>
@@ -50,6 +51,7 @@
                 </Operation>
 
 <!-- PLATOFRM CATEGORY -->
+	
                 <Operation Class="PatchOperationReplace">
                     <success>Always</success>
                     <xpath>Defs/TerrainDef[defName="Substructure"]/designationCategory</xpath>

@@ -327,7 +327,7 @@
         <success>Always</success>
         <xpath>Defs/ThingDef[defName="MultiAnalyzer"]/designationCategory</xpath>
         <value>
-            <designationCategory>Ferny_Auxiliaries</designationCategory>
+            <designationCategory>Ferny_ResearchProduction</designationCategory>
         </value>
     </Operation>
 
@@ -826,7 +826,7 @@
                 <Operation Class="PatchOperationReplace">
                     <xpath>Defs/DesignationCategoryDef[defName="Temperature"]/label</xpath>
                     <value>
-                        <label>Area</label>
+                        <label>Environment</label>
                     </value>
                 </Operation>
 
@@ -857,6 +857,15 @@
                         </modExtensions>
                     </value>
                 </Operation>
+                <Operation Class="PatchOperationAdd">
+                    <success>Always</success>
+                    <xpath>Defs/DesignationCategoryDef[defName="Ship"]/specialDesignatorClasses</xpath>
+                    <value>
+                        <li>Designator_RemoveFoundation</li>
+                    </value>
+                </Operation>
+
+
 
 <!-- LIGHTING -->
                 <Operation Class="PatchOperationReplace">
@@ -980,13 +989,6 @@
                 <Operation Class="PatchOperationReplace">
                     <success>Always</success>
                     <xpath>Defs/ThingDef[defName="ToolCabinet"]/designationCategory</xpath>
-                    <value>
-                        <designationCategory>Ferny_Auxiliaries</designationCategory>
-                    </value>
-                </Operation>
-                <Operation Class="PatchOperationReplace">
-                    <success>Always</success>
-                    <xpath>Defs/ThingDef[defName="MultiAnalyzer"]/designationCategory</xpath>
                     <value>
                         <designationCategory>Ferny_Auxiliaries</designationCategory>
                     </value>

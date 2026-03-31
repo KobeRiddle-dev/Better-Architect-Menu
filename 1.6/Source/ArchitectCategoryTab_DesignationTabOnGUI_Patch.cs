@@ -19,20 +19,26 @@ namespace BetterArchitect
         private static ArchitectCategoryTab currentArchitectCategoryTab;
         private static readonly Dictionary<DesignationCategoryDef, DesignationCategoryDef> selectedCategory = new Dictionary<DesignationCategoryDef, DesignationCategoryDef>();
         private static readonly Dictionary<DesignationCategoryDef, bool> categorySearchMatches = new Dictionary<DesignationCategoryDef, bool>();
-        private static Vector2 leftPanelScrollPosition, designatorGridScrollPosition, ordersScrollPosition;
+        public static Vector2 leftPanelScrollPosition, designatorGridScrollPosition, ordersScrollPosition;
         private static DesignationCategoryDef lastMainCategory;
         private static string lastSearchText = "";
         public static MaterialInfo selectedMaterial;
+        public const float EditToolbarHeight = 28f;
+        private const float EditToolbarVerticalPadding = 4f;
+        private const float EditToolbarReservedHeight = EditToolbarHeight + EditToolbarVerticalPadding;
         public static void Reset()
         {
             selectedCategory.Clear();
             categorySearchMatches.Clear();
             cachedSortedDesignators.Clear();
+            EditModeSelectionOverrides.ClearSelectionCache();
+            EditModeRuntime.InvalidateAllCaches();
             selectedMaterial = null;
             lastMainCategory = null;
             lastSearchText = "";
             leftPanelScrollPosition = designatorGridScrollPosition = ordersScrollPosition = Vector2.zero;
             currentArchitectCategoryTab = null;
+            BamDragDrop.Clear();
         }
         private struct SortCacheKey : IEquatable<SortCacheKey>
         {
@@ -86,35 +92,68 @@ namespace BetterArchitect
             }
         }
         private static readonly Dictionary<SortCacheKey, List<Designator>> cachedSortedDesignators = new Dictionary<SortCacheKey, List<Designator>>();
-
-        private static readonly Texture2D GroupingIcon = ContentFinder<Texture2D>.Get("GroupType");
-        private static readonly Texture2D SortType = ContentFinder<Texture2D>.Get("SortType");
-        private static readonly Texture2D AscendingIcon = ContentFinder<Texture2D>.Get("SortAscend");
-        private static readonly Texture2D DescendingIcon = ContentFinder<Texture2D>.Get("SortDescend");
-        private static readonly Texture2D FreeIcon = ContentFinder<Texture2D>.Get("UI/Free");
         private static Color CategoryHighlightColor => Color.yellow;
         private static Color CategoryLowlightColor => Color.grey;
 
-        private static bool IsSpecialCategory(DesignationCategoryDef cat)
+        internal static bool IsSpecialCategory(DesignationCategoryDef cat)
         {
-            return cat == DefsOf.Orders || cat == DesignationCategoryDefOf.Zone || cat.defName == "Blueprints" || cat.GetModExtension<SpecialCategoryExtension>() != null;
+            // Proxy defs (created for edit-mode overrides) have no modExtensions, so resolve
+            // to the real def by defName before checking SpecialCategoryExtension.
+            var sourceDef = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail(cat.defName);
+            return sourceDef == DefsOf.Orders ||
+                   sourceDef == DesignationCategoryDefOf.Zone ||
+                   sourceDef?.defName == "Blueprints" ||
+                   sourceDef?.GetModExtension<SpecialCategoryExtension>() != null;
         }
 
-        private static (List<Designator> buildables, List<Designator> orders) SeparateDesignatorsByType(IEnumerable<Designator> allDesignators, DesignationCategoryDef category)
+        internal static bool IsBlueprintCategory(DesignationCategoryDef cat)
         {
-            var buildables = new List<Designator>();
-            var orders = new List<Designator>();
+            var sourceDef = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail(cat.defName);
+            return sourceDef?.defName == "Blueprints" || cat.defName == "Blueprints";
+        }
+
+        private static bool IsEditModeEnabledFor(DesignationCategoryDef category)
+        {
+            return BetterArchitectSettings.editMode && !IsBlueprintCategory(category);
+        }
+
+        private static List<Designator> GetUniqueDesignators(IEnumerable<Designator> source)
+        {
+            var unique = new List<Designator>();
+            foreach (var d in source)
+            {
+                var existing = unique.FirstOrDefault(u => u.GroupsWith(d));
+                if (existing != null)
+                {
+                    existing.MergeWith(d);
+                }
+                else
+                {
+                    unique.Add(d);
+                }
+            }
+            return unique;
+        }
+
+        public static (List<Designator> buildables, List<Designator> orders) SeparateDesignatorsByType(IEnumerable<Designator> allDesignators, DesignationCategoryDef category)
+        {
+            var buildablesRaw = new List<Designator>();
+            var ordersRaw = new List<Designator>();
             foreach (var designator in allDesignators)
             {
                 if (designator is Designator_Build || (designator is Designator_Dropdown dd && dd.Elements.Any(e => e is Designator_Build)))
                 {
-                    buildables.Add(designator);
+                    buildablesRaw.Add(designator);
                 }
                 else
                 {
-                    orders.Add(designator);
+                    ordersRaw.Add(designator);
                 }
             }
+
+            var buildables = GetUniqueDesignators(buildablesRaw);
+            var orders = GetUniqueDesignators(ordersRaw);
+
             if (IsSpecialCategory(category))
             {
                 buildables.AddRange(orders);
@@ -130,7 +169,7 @@ namespace BetterArchitect
             {
                 if (Find.DesignatorManager.SelectedDesignator != null)
                 {
-                    Find.DesignatorManager.SelectedDesignator.DoExtraGuiControls(0f, (float)(UI.screenHeight - 35) - ((MainTabWindow_Architect)MainButtonDefOf.Architect.TabWindow).WinHeight - 270f);
+                    Find.DesignatorManager.SelectedDesignator.DoExtraGuiControls(ExtensionMethods.LeftUIEdge, (float)(UI.screenHeight - 35) - ((MainTabWindow_Architect)MainButtonDefOf.Architect.TabWindow).WinHeight - 270f);
                 }
                 DoInfoBox(Find.DesignatorManager.SelectedDesignator);
                 return false;
@@ -148,18 +187,18 @@ namespace BetterArchitect
         {
             if (Find.DesignatorManager.SelectedDesignator != null)
             {
-                Find.DesignatorManager.SelectedDesignator.DoExtraGuiControls(0f, (float)(UI.screenHeight - 35) - ((MainTabWindow_Architect)MainButtonDefOf.Architect.TabWindow).WinHeight - 270f);
+                Find.DesignatorManager.SelectedDesignator.DoExtraGuiControls(ExtensionMethods.LeftUIEdge, (float)(UI.screenHeight - 35) - ((MainTabWindow_Architect)MainButtonDefOf.Architect.TabWindow).WinHeight - 270f);
             }
             var menuHeight = BetterArchitectSettings.menuHeight;
             var leftWidth = 200f;
             var ordersWidth = 175f;
             var gizmoSize = 75f;
             var gizmoSpacing = 5f;
-            var availableWidth = UI.screenWidth - 195f - (((MainTabWindow_Architect)MainButtonDefOf.Architect.TabWindow).RequestedTabSize.x + 10f) - leftWidth - ordersWidth;
+            var availableWidth = ExtensionMethods.UIWidth - 195f - (((MainTabWindow_Architect)MainButtonDefOf.Architect.TabWindow).RequestedTabSize.x + 10f) - leftWidth - ordersWidth;
             var gizmosPerRow = Mathf.Max(1, Mathf.FloorToInt(availableWidth / (gizmoSize + gizmoSpacing)));
             var gridWidth = gizmosPerRow * (gizmoSize + gizmoSpacing) + gizmoSpacing + 11;
             var mainRect = new Rect(
-                ((MainTabWindow_Architect)MainButtonDefOf.Architect.TabWindow).RequestedTabSize.x + 10f,
+                ((MainTabWindow_Architect)MainButtonDefOf.Architect.TabWindow).RequestedTabSize.x + 10f + ExtensionMethods.LeftUIEdge,
                 UI.screenHeight - menuHeight - 35f,
                 leftWidth + gridWidth + ordersWidth,
                 menuHeight);
@@ -189,12 +228,22 @@ namespace BetterArchitect
                 var floorSpecificDesignators = new List<Designator>();
                 var orderSpecificDesignators = new List<Designator>();
 
-                HashSet<Designator> allFloorDesignators = new HashSet<Designator>();
-                allFloorDesignators.UnionWith(designatorDataList.FirstOrDefault(d => d.def == DesignationCategoryDefOf.Floors).allDesignators);
+                var rawFloorDesignators = new List<Designator>();
+                var floorsCatData = designatorDataList.FirstOrDefault(d => d.def == DesignationCategoryDefOf.Floors);
+                if (floorsCatData != null)
+                {
+                    rawFloorDesignators.AddRange(floorsCatData.allDesignators);
+                }
+                
                 foreach (DesignatorCategoryData designatorCategoryData in designatorDataList)
-                    allFloorDesignators.UnionWith(designatorCategoryData.allDesignators.Except(designatorCategoryData.orders));
+                {
+                    if (designatorCategoryData.def == DesignationCategoryDefOf.Floors) continue;
+                    rawFloorDesignators.AddRange(designatorCategoryData.allDesignators.Except(designatorCategoryData.orders));
+                }
 
-                foreach (var designator in allFloorDesignators)
+                var uniqueFloorDesignators = GetUniqueDesignators(rawFloorDesignators);
+
+                foreach (var designator in uniqueFloorDesignators)
                 {
                     if (designator is Designator_Dropdown dropdown)
                     {
@@ -225,13 +274,26 @@ namespace BetterArchitect
                 Designator_Build_ProcessInput_Transpiler.shouldSkipFloatMenu = false;
                 var selectedCategory = HandleCategorySelection(leftRect, tab.def, designatorDataList);
                 var selectedData = designatorDataList.FirstOrDefault(d => d.def == selectedCategory);
-                designatorsToDisplay = selectedData.buildables;
-                orderDesignators = selectedData.orders;
-                category = selectedCategory;
+                category = selectedData.def;
+
+                if (IsBlueprintCategory(category))
+                {
+                    var sourceDef = DefDatabase<DesignationCategoryDef>.GetNamedSilentFail(category.defName) ?? category;
+                    var blueprintDesignators = sourceDef.ResolvedAllowedDesignators?.Where(d => d.Visible).ToList() ?? new List<Designator>();
+                    var separated = SeparateDesignatorsByType(blueprintDesignators, sourceDef);
+                    designatorsToDisplay = separated.buildables;
+                    orderDesignators = separated.orders;
+                    category = sourceDef;
+                }
+                else
+                {
+                    designatorsToDisplay = selectedData.buildables;
+                    orderDesignators = selectedData.orders;
+                }
             }
 
             var mouseoverGizmo = DrawDesignatorGrid(gridRect, category, designatorsToDisplay);
-            var orderGizmo = DrawOrdersPanel(ordersRect, orderDesignators);
+            var orderGizmo = DrawOrdersPanel(ordersRect, orderDesignators, category);
             if (orderGizmo != null) mouseoverGizmo = orderGizmo;
             DoInfoBox(mouseoverGizmo ?? Find.DesignatorManager.SelectedDesignator);
             if (Event.current.type == EventType.MouseDown && Mouse.IsOver(mainRect)) Event.current.Use();
@@ -239,6 +301,16 @@ namespace BetterArchitect
 
         private static DesignationCategoryDef HandleCategorySelection(Rect rect, DesignationCategoryDef mainCat, List<DesignatorCategoryData> designatorDataList)
         {
+            bool isEditModeEnabled = IsEditModeEnabledFor(mainCat);
+            if (isEditModeEnabled)
+            {
+                rect.height -= EditToolbarReservedHeight;
+            }
+
+            if (!IsBlueprintCategory(mainCat))
+            {
+                EditModeSelectionOverrides.Apply(mainCat, designatorDataList);
+            }
             var allCategories = designatorDataList.Select(d => d.def).ToList();
             DesignationCategoryDef currentSelection = null;
             if (BetterArchitectSettings.rememberSubcategory || lastMainCategory == mainCat)
@@ -246,9 +318,10 @@ namespace BetterArchitect
                 selectedCategory.TryGetValue(mainCat, out currentSelection);
             }
             string currentSearchText = currentArchitectCategoryTab?.quickSearchFilter?.Active == true ? currentArchitectCategoryTab.quickSearchFilter.Text : "";
-            if (currentSearchText != lastSearchText)
+            if (currentSearchText != lastSearchText || lastMainCategory != mainCat)
             {
                 lastSearchText = currentSearchText;
+                lastMainCategory = mainCat;
                 categorySearchMatches.Clear();
                 foreach (var cat in allCategories)
                 {
@@ -298,7 +371,9 @@ namespace BetterArchitect
                 else
                 {
                     var categoryData = designatorDataList.FirstOrDefault(d => d.def == cat);
-                    if (categoryData != null && !categoryData.buildables.NullOrEmpty())
+                    var showForEditing = isEditModeEnabled &&
+                        EditModeSelectionOverrides.IsCurrentParentChildVisible(cat.defName);
+                    if (HasVisibleBuildables(categoryData) || showForEditing)
                     {
                         filteredSubCategories.Add(cat);
                     }
@@ -313,7 +388,7 @@ namespace BetterArchitect
                 {
                     if (IsSpecialCategory(cat)) return true;
                     var categoryData = designatorDataList.FirstOrDefault(d => d.def == cat);
-                    return categoryData != null && !categoryData.buildables.NullOrEmpty();
+                    return HasVisibleBuildables(categoryData);
                 });
 
                 shouldHideMoreCategory = subCategoriesHaveBuildings && !mainCategoryHasDesignators;
@@ -324,7 +399,16 @@ namespace BetterArchitect
             if (!shouldHideMoreCategory) displayCategories.Add(mainCat);
             if (currentSelection == null || !allCategories.Contains(currentSelection))
             {
-                if (displayCategories.Any())
+                // Proxy defs are recreated on cache invalidation, so the stored reference may be stale.
+                // Try to re-resolve by defName before falling back to the default first category.
+                var matchByName = currentSelection != null
+                    ? displayCategories.FirstOrDefault(c => c.defName == currentSelection.defName)
+                    : null;
+                if (matchByName != null)
+                {
+                    currentSelection = matchByName;
+                }
+                else if (displayCategories.Any())
                 {
                     currentSelection = displayCategories.First();
                 }
@@ -341,6 +425,12 @@ namespace BetterArchitect
             var outRect = rect.ContractedBy(10f);
             var viewRect = new Rect(0, 0, outRect.width - 16f, GetCategoryViewHeight(displayCategories.Count));
             HandleScrollBar(outRect, viewRect, ref leftPanelScrollPosition);
+
+            if (isEditModeEnabled)
+            {
+                CategoryEditControlsDrawer.TryHandleCategoryDrag(outRect, viewRect.width, displayCategories, mainCat, leftPanelScrollPosition);
+            }
+
             Widgets.BeginScrollView(outRect, ref leftPanelScrollPosition, viewRect);
             float curY = 0;
 
@@ -353,7 +443,6 @@ namespace BetterArchitect
                 {
                     categorySearchMatches.TryGetValue(cat, out categoryHasSearchMatches);
                 }
-
                 DrawOptionBackground(rowRect, isSelected, categoryHasSearchMatches, !categoryHasSearchMatches && currentArchitectCategoryTab?.quickSearchFilter?.Active == true);
                 if (Widgets.ButtonInvisible(rowRect))
                 {
@@ -382,13 +471,26 @@ namespace BetterArchitect
                 curY += rowRect.height + 5;
             }
             Widgets.EndScrollView();
+
+            if (isEditModeEnabled)
+            {
+                CategoryEditControlsDrawer.DrawCategoryDropHighlight(outRect, viewRect.width, displayCategories, leftPanelScrollPosition);
+                CategoryEditControlsDrawer.DrawCategoryGhost();
+                CategoryEditControlsDrawer.DrawCategoryEditControls(rect, mainCat, currentSelection);
+            }
+
             return currentSelection;
+        }
+
+        private static bool HasVisibleBuildables(DesignatorCategoryData categoryData)
+        {
+            return categoryData.buildables.Any(d => d.Visible);
         }
 
         private static List<Designator> DrawMaterialListForFloors(Rect rect, List<Designator> allFloorDesignators)
         {
             var floorsByMaterial = new Dictionary<MaterialInfo, List<Designator>>();
-            var freeKey = new MaterialInfo("BA.Free".Translate(), FreeIcon, Color.white, null);
+            var freeKey = new MaterialInfo("BA.Free".Translate(), Assets.FreeIcon, Color.white, null);
             foreach (var designator in allFloorDesignators) PopulateMaterials(floorsByMaterial, freeKey, designator);
             var materials = floorsByMaterial.Keys
                 .OrderBy(m => m.def == null ? 5 : (m.def.stuffProps?.categories?.Contains(StuffCategoryDefOf.Woody) == true ? 1 : (m.def.stuffProps?.categories?.Contains(StuffCategoryDefOf.Metallic) == true ? 2 : (m.def.stuffProps?.categories?.Contains(StuffCategoryDefOf.Stony) == true ? 3 : 4))))
@@ -422,6 +524,7 @@ namespace BetterArchitect
                 if (Widgets.ButtonInvisible(rowRect))
                 {
                     selectedMaterial = material;
+                    ClearSortCache();
                 }
                 curY += rowRect.height + 5;
             }
@@ -442,9 +545,17 @@ namespace BetterArchitect
 
         private static Designator DrawDesignatorGrid(Rect rect, DesignationCategoryDef category, List<Designator> designators)
         {
+            if (!BetterArchitectSettings.sortSettingsPerCategory.ContainsKey(category.defName)) BetterArchitectSettings.sortSettingsPerCategory[category.defName] = new SortSettings();
+            bool isEditModeEnabled = IsEditModeEnabledFor(category);
+
+            if (isEditModeEnabled)
+            {
+                BetterArchitectSettings.groupByTechLevelPerCategory[category.defName] = false;
+                BetterArchitectSettings.sortSettingsPerCategory[category.defName].SortBy = SortBy.Default;
+            }
+
             var viewControlsRect = new Rect(rect.xMax - 100f, rect.y, 235f, 28f);
             DrawViewControls(viewControlsRect, category, designators);
-            if (!BetterArchitectSettings.sortSettingsPerCategory.ContainsKey(category.defName)) BetterArchitectSettings.sortSettingsPerCategory[category.defName] = new SortSettings();
             var settings = BetterArchitectSettings.sortSettingsPerCategory[category.defName];
             SortDesignators(designators, settings, category);
             var outRect = new Rect(rect.x, rect.y + 30f, rect.width, rect.height - 30f);
@@ -468,11 +579,17 @@ namespace BetterArchitect
 
             bool groupByTechLevel = BetterArchitectSettings.groupByTechLevelPerCategory.ContainsKey(category.defName) ? BetterArchitectSettings.groupByTechLevelPerCategory[category.defName] : false;
             //designators = designators.Concat(designators).ToList();
-            return groupByTechLevel ? DrawGroupedGrid(outRect, designators) : DrawFlatGrid(outRect, designators);
+            return groupByTechLevel ? DrawGroupedGrid(outRect, designators) : DrawFlatGrid(outRect, designators, category);
         }
 
-        private static Designator DrawFlatGrid(Rect rect, List<Designator> designators)
+        private static Designator DrawFlatGrid(Rect rect, List<Designator> designators, DesignationCategoryDef category)
         {
+            bool isEditModeEnabled = IsEditModeEnabledFor(category);
+            if (isEditModeEnabled)
+            {
+                Bam_InlineDesignatorEditor.TryHandleOverlayInput(rect, designators, designatorGridScrollPosition, false, category);
+            }
+            
             var gizmoSize = 75f;
             var gizmoSpacing = 5f;
             var availableWidth = rect.width - 16f;
@@ -509,6 +626,12 @@ namespace BetterArchitect
             ProcessGizmoInteractions(interactedGizmo, floatMenuGizmo, interactedEvent);
             
             Widgets.EndScrollView();
+
+            if (isEditModeEnabled)
+            {
+                Bam_InlineDesignatorEditor.DrawGridOverlay(rect, designators, designatorGridScrollPosition, false, category);
+            }
+
             return mouseoverGizmo;
         }
 
@@ -581,8 +704,10 @@ namespace BetterArchitect
             var groupButtonRect = new Rect(rect.x, rect.y, rect.height, rect.height).ExpandedBy(-4f);
             var sortButtonRect = new Rect(groupButtonRect.xMax + 4f, rect.y + 4f, groupButtonRect.height, groupButtonRect.height).ExpandedBy(2f);
             var toggleRect = new Rect(sortButtonRect.xMax + 4f, rect.y + 4f, groupButtonRect.height, groupButtonRect.height).ExpandedBy(2f);
+            bool isBlueprintCategory = IsBlueprintCategory(category);
+            bool isEditModeEnabled = IsEditModeEnabledFor(category);
             bool groupByTechLevel = BetterArchitectSettings.groupByTechLevelPerCategory.ContainsKey(category.defName) ? BetterArchitectSettings.groupByTechLevelPerCategory[category.defName] : false;
-            if (Widgets.ButtonImage(groupButtonRect, GroupingIcon))
+            if (Widgets.ButtonImage(groupButtonRect, Assets.GroupingIcon))
             {
                 BetterArchitectSettings.groupByTechLevelPerCategory[category.defName] = !groupByTechLevel;
                 BetterArchitectSettings.Save();
@@ -593,7 +718,7 @@ namespace BetterArchitect
 
             if (!BetterArchitectSettings.sortSettingsPerCategory.ContainsKey(category.defName)) BetterArchitectSettings.sortSettingsPerCategory[category.defName] = new SortSettings();
             var settings = BetterArchitectSettings.sortSettingsPerCategory[category.defName];
-            if (Widgets.ButtonImage(sortButtonRect, SortType))
+            if (Widgets.ButtonImage(sortButtonRect, Assets.SortType))
             {
                 var availableSortOptions = Enum.GetValues(typeof(SortBy)).Cast<SortBy>().Where(sortBy =>
                 {
@@ -613,13 +738,33 @@ namespace BetterArchitect
 
                 Find.WindowStack.Add(new FloatMenu(availableSortOptions));
             }
-            if (Widgets.ButtonImage(toggleRect, settings.Ascending ? AscendingIcon : DescendingIcon))
+            if (Widgets.ButtonImage(toggleRect, settings.Ascending ? Assets.AscendingIcon : Assets.DescendingIcon))
             {
                 settings.Ascending = !settings.Ascending;
                 BetterArchitectSettings.Save();
                 SoundDefOf.Tick_High.PlayOneShotOnCamera();
                 ClearSortCache();
             }
+
+            var buttonRect = new Rect(rect.x - 30f, rect.y + 4f, 24f, 24f).ExpandedBy(1f);
+            var icon = isEditModeEnabled ? Assets.EditIconHighlighted : Assets.EditIcon;
+
+            if (Widgets.ButtonImage(buttonRect, icon))
+            {
+                if (!isBlueprintCategory)
+                {
+                    BetterArchitectSettings.editMode = !BetterArchitectSettings.editMode;
+                    BamDragDrop.Clear();
+                    BetterArchitectSettings.Save();
+                }
+            }
+
+            if (isEditModeEnabled)
+            {
+                Widgets.DrawHighlight(buttonRect);
+            }
+
+            TooltipHandler.TipRegion(buttonRect, "BA.EditModeToggleTooltip".Translate());
         }
 
         private static void SortDesignators(List<Designator> designators, SortSettings settings, DesignationCategoryDef category)
@@ -694,35 +839,40 @@ namespace BetterArchitect
             if (buildable == null) return null;
             return sortBy switch
             {
-                SortBy.Beauty => GetStatValueIfDefined(buildable, StatDefOf.Beauty),
-                SortBy.Comfort => GetStatValueIfDefined(buildable, StatDefOf.Comfort),
-                SortBy.Value => GetStatValueIfDefined(buildable, StatDefOf.MarketValue),
-                SortBy.WorkToBuild => GetStatValueIfDefined(buildable, StatDefOf.WorkToBuild),
-                SortBy.Health => GetStatValueIfDefined(buildable, StatDefOf.MaxHitPoints),
-                SortBy.Cleanliness => GetStatValueIfDefined(buildable, StatDefOf.Cleanliness),
-                SortBy.Flammability => GetStatValueIfDefined(buildable, StatDefOf.Flammability),
+                SortBy.Beauty => GetStatValueIfDefined(buildable, StatDefOf.Beauty, d),
+                SortBy.Comfort => GetStatValueIfDefined(buildable, StatDefOf.Comfort, d),
+                SortBy.Value => GetStatValueIfDefined(buildable, StatDefOf.MarketValue, d),
+                SortBy.WorkToBuild => GetStatValueIfDefined(buildable, StatDefOf.WorkToBuild, d),
+                SortBy.Health => GetStatValueIfDefined(buildable, StatDefOf.MaxHitPoints, d),
+                SortBy.Cleanliness => GetStatValueIfDefined(buildable, StatDefOf.Cleanliness, d),
+                SortBy.Flammability => GetStatValueIfDefined(buildable, StatDefOf.Flammability, d),
                 SortBy.SkillRequired => buildable.constructionSkillPrerequisite,
                 SortBy.CoverEffectiveness => buildable is ThingDef thingDef ? thingDef.fillPercent : (float?)null,
                 SortBy.MaxPowerOutput => GetMaxPowerOutput(buildable),
                 SortBy.PowerConsumption => GetPowerConsumption(buildable),
-                SortBy.RecreationPower => GetStatValueIfDefined(buildable, StatDefOf.JoyGainFactor),
+                SortBy.RecreationPower => GetStatValueIfDefined(buildable, StatDefOf.JoyGainFactor, d),
                 SortBy.MoveSpeed => GetMoveSpeed(buildable),
                 SortBy.TotalStorageCapacity => GetTotalStorageCapacity(buildable),
-                SortBy.DoorOpeningSpeed => GetStatValueIfDefined(buildable, StatDefOf.DoorOpenSpeed),
-                SortBy.WorkSpeedFactor => GetStatValueIfDefined(buildable, StatDefOf.WorkTableWorkSpeedFactor),
+                SortBy.DoorOpeningSpeed => GetStatValueIfDefined(buildable, StatDefOf.DoorOpenSpeed, d),
+                SortBy.WorkSpeedFactor => GetStatValueIfDefined(buildable, StatDefOf.WorkTableWorkSpeedFactor, d),
                 _ => null
             };
         }
 
-        private static ThingDef GetStuffFrom(BuildableDef buildable)
+        private static ThingDef GetStuffFrom(BuildableDef buildable, Designator d = null)
         {
             if (buildable is not ThingDef thingDef || thingDef.MadeFromStuff is false) return null;
 
+            if (d is Designator_Build db && db.StuffDefRaw != null)
+            {
+                return db.StuffDefRaw;
+            }
+
             if (Find.CurrentMap == null) return null;
 
-            foreach (ThingDef item in from d in Find.CurrentMap.resourceCounter.AllCountedAmounts.Keys
-                                      orderby d.stuffProps?.commonality ?? float.PositiveInfinity descending, d.BaseMarketValue
-                                      select d)
+            foreach (ThingDef item in from stuff in Find.CurrentMap.resourceCounter.AllCountedAmounts.Keys
+                                      orderby stuff.stuffProps?.commonality ?? float.PositiveInfinity descending, stuff.BaseMarketValue
+                                      select stuff)
             {
                 if (item.IsStuff && item.stuffProps.CanMake(thingDef) && (DebugSettings.godMode || Find.CurrentMap.listerThings.ThingsOfDef(item).Count > 0))
                 {
@@ -733,13 +883,19 @@ namespace BetterArchitect
             return null;
         }
 
-        private static Designator DrawOrdersPanel(Rect rect, List<Designator> designators)
+        private static Designator DrawOrdersPanel(Rect rect, List<Designator> designators, DesignationCategoryDef category)
         {
             var gizmoSize = 75f;
             var gizmoSpacing = 5f;
             var rowHeight = gizmoSize + gizmoSpacing + 5f;
             var outRect = rect.ContractedBy(2f);
             outRect.width += 2;
+            bool isEditModeEnabled = IsEditModeEnabledFor(category);
+
+            if (isEditModeEnabled)
+            {
+                Bam_InlineDesignatorEditor.TryHandleOverlayInput(outRect, designators, ordersScrollPosition, true, category);
+            }
 
             var columns = 2;
             var columnWidth = (outRect.width - 16f - (columns - 1) * gizmoSpacing) / columns;
@@ -776,15 +932,23 @@ namespace BetterArchitect
             ProcessGizmoInteractions(interactedGizmo, floatMenuGizmo, interactedEvent);
             
             Widgets.EndScrollView();
+
+            if (isEditModeEnabled)
+            {
+                Bam_InlineDesignatorEditor.DrawGridOverlay(outRect, designators, ordersScrollPosition, true, category);
+            }
+
             return mouseoverGizmo;
         }
 
         private static void DoInfoBox(Designator designator)
         {
-            Find.WindowStack.ImmediateWindow(32520, ArchitectCategoryTab.InfoRect, WindowLayer.GameUI, delegate
+            Rect infoBoxRect = ArchitectCategoryTab.InfoRect;
+            infoBoxRect.x += ExtensionMethods.LeftUIEdge;
+            Find.WindowStack.ImmediateWindow(32520, infoBoxRect, WindowLayer.GameUI, delegate
             {
                 if (designator == null) return;
-                Rect rect = ArchitectCategoryTab.InfoRect.AtZero().ContractedBy(7f);
+                Rect rect = infoBoxRect.AtZero().ContractedBy(7f);
                 Widgets.BeginGroup(rect);
                 Rect titleRect = new Rect(0f, 0f, rect.width - designator.PanelReadoutTitleExtraRightMargin, 999f);
                 Text.Font = GameFont.Small;
@@ -1005,13 +1169,13 @@ namespace BetterArchitect
             return null;
         }
 
-        private static float? GetStatValueIfDefined(BuildableDef buildable, StatDef statDef)
+        private static float? GetStatValueIfDefined(BuildableDef buildable, StatDef statDef, Designator d = null)
         {
             if (statDef.showIfUndefined is false && buildable.StatBaseDefined(statDef) is false)
             {
                 return null;
             }
-            var stuff = GetStuffFrom(buildable);
+            var stuff = GetStuffFrom(buildable, d);
             var value = buildable.GetStatValueAbstract(statDef, stuff);
             return value;
         }

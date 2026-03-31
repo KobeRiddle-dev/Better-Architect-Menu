@@ -89,10 +89,26 @@
     </modExtensions> -->
   </DesignationCategoryDef>
 
-    <DesignationCategoryDef>
+  <DesignationCategoryDef>
 		<defName>Ferny_DecoPlants</defName>
 		<label>Plants</label>
 		<description>Manage plant decorations.</description>
+		<order>900</order>
+		<specialDesignatorClasses>
+			<li>Designator_Cancel</li>
+			<li>Designator_Deconstruct</li>
+		</specialDesignatorClasses>
+		<modExtensions>
+			<li Class="BetterArchitect.NestedCategoryExtension">
+				<parentCategory>Ferny_Decorations</parentCategory>
+			</li>
+		</modExtensions>
+	</DesignationCategoryDef>
+
+  <DesignationCategoryDef>
+		<defName>Ferny_DecoFrames</defName>
+		<label>Frames</label>
+		<description>Manage frame decorations.</description>
 		<order>900</order>
 		<specialDesignatorClasses>
 			<li>Designator_Cancel</li>
@@ -188,7 +204,7 @@
 
   <DesignationCategoryDef>
     <defName>Ferny_ProcessingProduction</defName>
-    <label>Process</label>
+    <label>Refine</label>
     <description>Processing production methods.</description>
     <order>652</order>
     <specialDesignatorClasses>
@@ -221,7 +237,7 @@
 
   <DesignationCategoryDef>
     <defName>Ferny_Kitchen</defName>
-    <label>Kitchen</label>
+    <label>Feed</label>
     <description>Things that relate to food.</description>
     <order>640</order>
     <specialDesignatorClasses>
@@ -238,7 +254,7 @@
 
   <DesignationCategoryDef>
     <defName>Ferny_Farming</defName>
-    <label>Farming</label>
+    <label>Farm</label>
     <description>Things that relate to agriculture.</description>
     <order>640</order>
     <specialDesignatorClasses>
@@ -270,7 +286,7 @@
 
   <DesignationCategoryDef>
     <defName>Ferny_Auxiliaries</defName>
-    <label>Auxiliaries</label>
+    <label>Linkables</label>
     <description>Things that boost workspeed.</description>
     <order>2</order>
     <specialDesignatorClasses>
@@ -504,6 +520,22 @@
     <defName>Ferny_Weapons</defName>
     <label>Weapons</label>
     <description>Build weapons for your enemies.</description>
+    <order>901</order>
+    <specialDesignatorClasses>
+      <li>Designator_Cancel</li>
+      <li>Designator_Deconstruct</li>
+    </specialDesignatorClasses>
+    <modExtensions>
+      <li Class="BetterArchitect.NestedCategoryExtension">
+        <parentCategory>Security</parentCategory>
+      </li>
+    </modExtensions>
+  </DesignationCategoryDef>
+
+  <DesignationCategoryDef>
+    <defName>Ferny_Concealed</defName>
+    <label>Concealed</label>
+    <description>Build conealed buildings for surprising your enemies.</description>
     <order>901</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
@@ -773,6 +805,22 @@
   </DesignationCategoryDef>
 
   <DesignationCategoryDef>
+    <defName>Ferny_Meditation</defName>
+    <label>Meditation</label>
+    <description>Places for colonists to meditate.</description>
+    <order>2</order>
+    <specialDesignatorClasses>
+      <li>Designator_Cancel</li>
+      <li>Designator_Deconstruct</li>
+    </specialDesignatorClasses>
+    <modExtensions>
+      <li Class="BetterArchitect.NestedCategoryExtension">
+        <parentCategory>Ferny_Life</parentCategory>
+      </li>
+    </modExtensions>
+  </DesignationCategoryDef>
+
+  <DesignationCategoryDef>
     <defName>Ferny_ColonyLocations</defName>
     <label>Locations</label>
     <description>Manage relevant colony locations.</description>
@@ -816,6 +864,22 @@
     <label>Medical</label>
     <description>Manage medical tech.</description>
     <order>900</order>
+    <specialDesignatorClasses>
+      <li>Designator_Cancel</li>
+      <li>Designator_Deconstruct</li>
+    </specialDesignatorClasses>
+    <modExtensions>
+      <li Class="BetterArchitect.NestedCategoryExtension">
+        <parentCategory>Ferny_Biotech</parentCategory>
+      </li>
+    </modExtensions>
+  </DesignationCategoryDef>
+
+  <DesignationCategoryDef>
+    <defName>Ferny_Biohazards</defName>
+    <label>Biohazards</label>
+    <description>Manage biohazards.</description>
+    <order>90</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
@@ -898,6 +962,22 @@
     <defName>Ferny_NavalTransport</defName>
     <label>Naval</label>
     <description>Build naval transport.</description>
+    <order>7</order>
+    <specialDesignatorClasses>
+      <li>Designator_Cancel</li>
+      <li>Designator_Deconstruct</li>
+    </specialDesignatorClasses>
+    <modExtensions>
+      <li Class="BetterArchitect.NestedCategoryExtension">
+        <parentCategory>Ferny_Transport</parentCategory>
+      </li>
+    </modExtensions>
+  </DesignationCategoryDef>
+
+  <DesignationCategoryDef>
+    <defName>Ferny_PlatformTransport</defName>
+    <label>Platform</label>
+    <description>Build platform transport.</description>
     <order>7</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
@@ -1037,6 +1117,7 @@
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
+      <li>Designator_RemoveFoundation</li>
     </specialDesignatorClasses>
   </DesignationCategoryDef>
 
@@ -1048,6 +1129,7 @@
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
+      <li>Designator_RemoveFoundation</li>
     </specialDesignatorClasses>
     <modExtensions>
       <li Class="BetterArchitect.NestedCategoryExtension">
@@ -1064,6 +1146,7 @@
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
+      <li>Designator_RemoveFoundation</li>
     </specialDesignatorClasses>
     <modExtensions>
       <li Class="BetterArchitect.NestedCategoryExtension">
@@ -1076,10 +1159,11 @@
     <defName>Ferny_SpaceCombat</defName>
     <label>Combat</label>
     <description>Build space combat buildings.</description>
-    <order>6</order>
+    <order>4</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
+      <li>Designator_RemoveFoundation</li>
     </specialDesignatorClasses>
     <modExtensions>
       <li Class="BetterArchitect.NestedCategoryExtension">
@@ -1092,7 +1176,7 @@
     <defName>Ferny_SpaceFurniture</defName>
     <label>Furniture</label>
     <description>Build space furniture.</description>
-    <order>6</order>
+    <order>4</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
@@ -1108,10 +1192,11 @@
     <defName>Ferny_VehicleStorage</defName>
     <label>Storage</label>
     <description>Build vehicle storage.</description>
-    <order>6</order>
+    <order>4</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
+      <li>Designator_RemoveFoundation</li>
       <li>Designator_ZoneAddStockpile_Resources</li>
       <li>Designator_ZoneAddStockpile_Dumping</li>
     </specialDesignatorClasses>
@@ -1126,10 +1211,11 @@
     <defName>Ferny_SpaceProduction</defName>
     <label>Production</label>
     <description>Build space production benches.</description>
-    <order>6</order>
+    <order>4</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
+      <li>Designator_RemoveFoundation</li>
     </specialDesignatorClasses>
     <modExtensions>
       <li Class="BetterArchitect.NestedCategoryExtension">
@@ -1142,10 +1228,11 @@
     <defName>Ferny_SpacePower</defName>
     <label>Power</label>
     <description>Build space power buildings.</description>
-    <order>6</order>
+    <order>4</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>
+      <li>Designator_RemoveFoundation</li>
     </specialDesignatorClasses>
     <modExtensions>
       <li Class="BetterArchitect.NestedCategoryExtension">
@@ -1280,7 +1367,7 @@
 		</modExtensions>
   </DesignationCategoryDef>
 
-	<!-- VRE Androids and VE Chemfuel Unofficial Expansion both need a neutroamine network category. -->
+	<!-- VRE Androids,VE Chemfuel Unofficial Expansion, and Unofficial Chemfuel Expanded all need a neutroamine network category. -->
 	<DesignationCategoryDef>
 		<defName>Ferny_NeutroamineNetwork</defName>
 		<label>Neutroamine</label>
@@ -1435,7 +1522,14 @@
     </modExtensions>
   </DesignationCategoryDef>
 
-
-
+	<DesignationCategoryDef>
+		<defName>VCHE_PipeNetworks</defName>
+		<label>Resources</label>
+		<order>350</order>
+		<specialDesignatorClasses>
+		<li>Designator_Cancel</li>
+		<li>Designator_Deconstruct</li>
+		</specialDesignatorClasses>
+	</DesignationCategoryDef>
 
 </Defs>

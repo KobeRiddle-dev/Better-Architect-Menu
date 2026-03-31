@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>          
+<Patch>       
+
+<!-- PRODUCE -->
+<Operation Class="PatchOperationFindMod">
+  <mods>
+    <li>Progression: Attire</li>
+  </mods>
+  <nomatch Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="UNA_DressTailoringBench"]/designationCategory</xpath>
+    <value>
+      <designationCategory>Ferny_Production</designationCategory>
+    </value>
+  </nomatch>
+</Operation>
+
+
+</Patch>
