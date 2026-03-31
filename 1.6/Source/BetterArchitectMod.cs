@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using RimWorld;
 using UnityEngine;
@@ -9,11 +11,17 @@ namespace BetterArchitect
     {
         public static BetterArchitectSettings settings;
 
+        // For simplicity, all patch categories should use the same identifier as the mod they categorize
+        private List<String> PatchCategories = new List<string>()
+        {
+            "OskarPotocki.VFE.Medieval2"
+        };
+
         public BetterArchitectMod(ModContentPack content) : base(content)
         {
+            // Queue init
             LongEventHandler.QueueLongEvent(Init, "BA.LoadingLabel", true, null);
-            Harmony harmonyInstance = new Harmony("BetterArchitectMod");
-            harmonyInstance.PatchAll();
+            ApplyHarmonyPatches();
         }
 
         public void Init()
@@ -21,6 +29,23 @@ namespace BetterArchitect
             settings = GetSettings<BetterArchitectSettings>();
             BetterArchitectSettings.mod = this;
             EditModeRuntime.Initialize();
+        }
+
+        /// <summary>
+        /// Applies all Harmony patches. Only patches for active mods will be applied, so long as they are properly categorized and the patch category is included in PatchCategories
+        /// </summary>
+        private void ApplyHarmonyPatches()
+        {
+            Harmony harmonyInstance = new Harmony("BetterArchitectMod");
+
+            foreach (string category in PatchCategories)
+            {
+                bool modIsActive = ModLister.GetActiveModWithIdentifier(category) != null;
+                if (modIsActive)
+                    harmonyInstance.PatchCategory(category);
+            }
+
+            harmonyInstance.PatchAllUncategorized();
         }
 
         public override void DoSettingsWindowContents(Rect inRect)

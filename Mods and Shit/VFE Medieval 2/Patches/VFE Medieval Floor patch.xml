@@ -3,7 +3,7 @@
 
     <!-- Floors -->
     <Operation Class="PatchOperationAddModExtension">
-        <xpath>Defs/VFEMedieval.LeatherTerrainTemplateDef[defName="VFEM2_Matting_"]</xpath>
+        <xpath>Defs/VFEMedieval.LeatherTerrainTemplateDef[defName="VFEM2_Matting_" or defName="VFEM2_FineMatting_"]</xpath>
         <value>
             <li Class="BetterArchitect.TemplateCategoryExtension">
                 <designationCategory>Ferny_FloorsCarpet</designationCategory>
