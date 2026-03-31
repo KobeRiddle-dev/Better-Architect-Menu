@@ -12,6 +12,8 @@ namespace BetterArchitect
         public BetterArchitectMod(ModContentPack content) : base(content)
         {
             LongEventHandler.QueueLongEvent(Init, "BA.LoadingLabel", true, null);
+            Harmony harmonyInstance = new Harmony("BetterArchitectMod");
+            harmonyInstance.PatchAll();
         }
 
         public void Init()
@@ -19,8 +21,6 @@ namespace BetterArchitect
             settings = GetSettings<BetterArchitectSettings>();
             BetterArchitectSettings.mod = this;
             EditModeRuntime.Initialize();
-            Harmony harmonyInstance = new Harmony("BetterArchitectMod");
-            harmonyInstance.PatchAll();
         }
 
         public override void DoSettingsWindowContents(Rect inRect)

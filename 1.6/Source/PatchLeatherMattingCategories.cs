@@ -4,7 +4,7 @@ using Verse;
 
 namespace BetterArchitect;
 
-[HarmonyPatch]
+// [HarmonyPatch]
 public static class TerrainFromLeather
 {
     static DesignationCategoryDef CarpetCategory = DefDatabase<DesignationCategoryDef>.GetNamed("Ferny_FloorsCarpet");
