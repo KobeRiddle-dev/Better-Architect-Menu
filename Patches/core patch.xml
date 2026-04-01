@@ -1472,6 +1472,15 @@
                     </value>
                 </Operation>
 
+    <Operation Class="PatchOperationReplace">
+        <success>Always</success>
+        <xpath>Defs/ThingDef[defName="DeepDrill"]/designationCategory</xpath>
+        <value>
+            <designationCategory>Ferny_Production</designationCategory>
+        </value>
+    </Operation>
+
+
     <!-- ART PRODUCTION -->
     <Operation Class="PatchOperationReplace">
         <success>Always</success>
@@ -1492,13 +1501,7 @@
         </value>
     </Operation>
 
-    <Operation Class="PatchOperationReplace">
-        <success>Always</success>
-        <xpath>Defs/ThingDef[defName="DeepDrill"]/designationCategory</xpath>
-        <value>
-            <designationCategory>Ferny_ProductionInfrastructure</designationCategory>
-        </value>
-    </Operation>
+
 
     <!-- ANIMAL TRAVEL -->
     <Operation Class="PatchOperationReplace">

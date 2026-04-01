@@ -7,4 +7,71 @@
               <designationCategory>Ferny_Farming</designationCategory>
           </value>
       </Operation>
+    
+
+      <Operation Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/ThingDef[defName="BMT_SandWall"]/designationCategory</xpath>
+          <value>
+              <designationCategory>Ferny_Walls</designationCategory>
+          </value>
+      </Operation>
+
+      <Operation Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/ThingDef[defName="BMT_LightSandWall"]/designationCategory</xpath>
+          <value>
+              <designationCategory>Ferny_Walls</designationCategory>
+          </value>
+      </Operation>
+
+      <Operation Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/ThingDef[defName="BMT_DenseSandWall"]/designationCategory</xpath>
+          <value>
+              <designationCategory>Ferny_Walls</designationCategory>
+          </value>
+      </Operation>
+
+      <Operation Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/ThingDef[defName="BMT_IceWallBuildable"]/designationCategory</xpath>
+          <value>
+              <designationCategory>Ferny_Walls</designationCategory>
+          </value>
+      </Operation>
+
+      <Operation Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/ThingDef[defName="BMT_SandDiggingSpot"]/designationCategory</xpath>
+          <value>
+              <designationCategory>Ferny_Production</designationCategory>
+          </value>
+      </Operation>
+
+      <Operation Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/ThingDef[defName="BMT_IceDiggingSpot"]/designationCategory</xpath>
+          <value>
+              <designationCategory>Ferny_Production</designationCategory>
+          </value>
+      </Operation>
+
+      <Operation Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/ThingDef[defName="BMT_LavaGenerator"]/designationCategory</xpath>
+          <value>
+              <designationCategory>Ferny_PowerGeneration</designationCategory>
+          </value>
+      </Operation>
+
+      <Operation Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/ThingDef[defName="BMT_MagmaPump"]/designationCategory</xpath>
+          <value>
+              <designationCategory>Ferny_Production</designationCategory>
+          </value>
+      </Operation>
+
+
 </Patch>
