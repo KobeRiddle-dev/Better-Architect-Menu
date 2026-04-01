@@ -1401,12 +1401,12 @@
 		</modExtensions>
 	</DesignationCategoryDef>
 
-<!-- Lordbeef's floor stuff -->
+<!-- LordBeef's floor stuff -->
   <DesignationCategoryDef>
     <defName>Ferny_FloorsWood</defName>
     <label>Wood</label>
     <description>Wooden Floors.</description>
-    <order>000</order>
+    <order>900</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_RemoveFloor</li>
@@ -1426,7 +1426,7 @@
     <defName>Ferny_FloorsStone</defName>
     <label>Stone</label>
     <description>Stone Floors.</description>
-    <order>100</order>
+    <order>800</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_RemoveFloor</li>
@@ -1446,7 +1446,7 @@
     <defName>Ferny_FloorsConcrete</defName>
     <label>Concrete</label>
     <description>Concrete Floors.</description>
-    <order>200</order>
+    <order>700</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_RemoveFloor</li>
@@ -1466,7 +1466,7 @@
     <defName>Ferny_FloorsMetal</defName>
     <label>Metal</label>
     <description>Metal Floors.</description>
-    <order>300</order>
+    <order>600</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_RemoveFloor</li>
@@ -1486,7 +1486,7 @@
     <defName>Ferny_FloorsCarpet</defName>
     <label>Carpet</label>
     <description>Carpeted Floors.</description>
-    <order>400</order>
+    <order>500</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_RemoveFloor</li>
@@ -1506,7 +1506,7 @@
     <defName>Ferny_FloorsClean</defName>
     <label>Clean</label>
     <description>Clean Floors.</description>
-    <order>500</order>
+    <order>400</order>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_RemoveFloor</li>
